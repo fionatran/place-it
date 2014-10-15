@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="17"
-        android:targetSdkVersion="19" />
+        android:targetSdkVersion="17" />
 
     <permission
         android:name="com.example.placeitmap.MAPS_RECEIVE"
@@ -39,7 +39,7 @@
     	android:value="@integer/google_play_services_version" />
         <meta-data
                 android:name="com.google.android.maps.v2.API_KEY"
-                android:value="AIzaSyApUlgw4dpqe_07swUb7U5rjGLZEnvzltY" />
+                android:value="AIzaSyCrS8a_d8iYgL8BWiiGcoXyIx5FJmg1g0I" />
         
         
       <activity
