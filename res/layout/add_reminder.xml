@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="40dp"
         android:ems="10"
         android:hint="Reminder Text" />
 
@@ -24,5 +24,6 @@
 	    android:ems="10"
 	    android:hint="Radius in meters"
 	    android:inputType="number" />
-    
+
+	
 </RelativeLayout>

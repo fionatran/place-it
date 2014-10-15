@@ -46,7 +46,7 @@ public class splash extends Activity {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				} finally {
-					Intent view = new Intent(splash.this, MainActivity.class);
+					Intent view = new Intent(splash.this, GoogleMaps.class);
 					splash.this.startActivity(view);
 				}
 			}

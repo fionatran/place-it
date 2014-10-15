@@ -3,7 +3,6 @@ package com.example.placeitmap.services;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.example.placeitmap.MainActivity;
 import com.example.placeitmap.splash;
 
 import android.content.Context;

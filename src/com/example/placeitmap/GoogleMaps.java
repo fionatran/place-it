@@ -1,5 +1,6 @@
 package com.example.placeitmap;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import android.app.AlertDialog;
@@ -17,7 +18,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Toast;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.example.placeitmap.database.placeitDB;
 import com.example.placeitmap.dto.Reminder;
@@ -37,14 +41,17 @@ public class GoogleMaps extends FragmentActivity implements
 	GoogleMap.OnMapClickListener, LocationListener {
 	double latitude;
 	double longitude;
+	int mytype = 0;
 	GoogleMap googleMap;
 	UiSettings uiSettings;
 	Marker selectedLocation;
 	Button SelectOkButton;
+	ArrayList<Marker> markers;
 	private LocationManager locationManager;
 	private static final long MIN_TIME = 400;
 	private static final float MIN_DISTANCE = 1000;
-
+	
+	  
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -58,15 +65,31 @@ public class GoogleMaps extends FragmentActivity implements
 
 		Button getPosition = (Button) findViewById(R.id.selectLocation);
 		final View setView  = getLayoutInflater().inflate(R.layout.add_reminder, null);
+			
 		getPosition.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				
-				
+
+				final CharSequence[] colors_radio={"When I leave","When I Arrive"};
 				AlertDialog.Builder alert = new AlertDialog.Builder(GoogleMaps.this);
 				alert.setTitle("Add Reminder");
 				alert.setView(setView); 
+				
+				alert.setSingleChoiceItems(colors_radio, 0, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+					if (colors_radio[which] == "When I leave"){
+						mytype=0;}
+					if (colors_radio[which] == "When I Arrive"){
+						mytype=1;}
+				
+				Toast.makeText(getApplicationContext(),"choice  "+mytype, Toast.LENGTH_LONG).show();
+
+						}
+					});
+
 				alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
 		               @Override
 		               public void onClick(DialogInterface dialog, int id) {
@@ -78,79 +101,38 @@ public class GoogleMaps extends FragmentActivity implements
 		            		rem.setLongitude(selectedLocation.getPosition().longitude);
 		            		rem.setRemiderText(reminderText.getText().toString());
 		            		rem.setRadius(Float.parseFloat(radius.getText().toString()));
-		            		rem.setReminderType(Reminder.WHEN_I_ARRIVE);
+		            		if (mytype==1){
+		            			rem.setReminderType(Reminder.WHEN_I_ARRIVE);}
+		            		if (mytype==0){
+			            		rem.setReminderType(Reminder.WHEN_I_LEAVE);}
 		            		rem.setCreated(new Date());
 		            		rem.setPriority(1);
 		            		rem.setisReminded(0);
-		            		
-		            		
+		                        		
 		            		placeitDB adb = new placeitDB(GoogleMaps.this);
 		            		adb.open();
 		            		long returnData = adb.createEntry(rem);
 		            		Log.d("Testing", " " +returnData);
 		            		adb.close();
-		            	  // Toast.makeText(getApplicationContext(), "Longitude: " + longitude + " Latitute: " + latitude + "Radius" + radius ,5).show();
-		            		
-		            	  // Toast.makeText(getApplicationContext(), "Longitude: " + longitude + " Latitute: " + latitude + " " + reminderText.getText().toString(),5).show();
-		            		
-		            		Toast.makeText(getApplicationContext(), "Reminder Saved!", 5).show();
-		            		finish();
+		            	 	Toast.makeText(getApplicationContext(), "Reminder Saved!", 5).show();
+		            	 	dialog.cancel();
+		            	
+		            	 	//finish();
 		               }
-		           })
-		           .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		           });
+		           alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 		               public void onClick(DialogInterface dialog, int id) {
+		            	   
+		            	   dialog.cancel();
+		        
 		                   
 		               }
 		           });
 				
 				alert.show();
-			
-				
-				/*AlertDialog.Builder builder = new AlertDialog.Builder(
-						GoogleMaps.this);
-				builder.setMessage(selectedLocation.getPosition().latitude
-						+ ", " + selectedLocation.getPosition().longitude);
-				AlertDialog alert = builder.create();
-				alert.show();*/
-				
-				/*
-				LocationResult locationResult = new LocationResult(){
-        		    @Override
-        		    public void gotLocation(Location location){
-        		        latitude = location.getLatitude();
-        		        longitude = location.getLongitude();
-        		    }
-        		};
-        		MyLocation myLocation = new MyLocation();
-        		myLocation.getLocation(GoogleMaps.this, locationResult);
-        		Reminder rem = new Reminder();
-        		EditText reminderText = (EditText)setView.findViewById(R.id.editText1);
-        		EditText radius = (EditText)setView.findViewById(R.id.editText2);
-        		rem.setLatitude(selectedLocation.getPosition().latitude);
-        		rem.setLongitude(selectedLocation.getPosition().longitude);
-        		rem.setRemiderText(reminderText.getText().toString());
-        		rem.setRadius(Float.parseFloat(radius.getText().toString()));
-        		rem.setReminderType(0);
-        		rem.setCreated(new Date());
-        		rem.setPriority(1);
-        		rem.setisReminded(0);
-        		placeitDB adb = new placeitDB(GoogleMaps.this);
-        		adb.open();
-        		long returnData = adb.createEntry(rem);
-        		Log.d("Testing", " " +returnData);
-        		adb.close();
-        		Toast.makeText(getApplicationContext(), "Reminder Saved!", 5).show();*/
 			}
 		});
-		ImageButton backButton = (ImageButton) findViewById(R.id.imgbutton1);
-		backButton.setOnClickListener(new View.OnClickListener() {
 
-			@Override
-			public void onClick(View arg0) {
-				// TODO Auto-generated method stub
-				finish();
-			}
-		});
 	}
 
 	private void buildAlertMessageNoGps() {
@@ -181,6 +163,59 @@ public class GoogleMaps extends FragmentActivity implements
 		uiSettings.setAllGesturesEnabled(true);
 	}
 
+	
+	
+	private void setMarkersOnMap() {
+		markers = new ArrayList<Marker>();
+		ArrayList<Reminder> reminders;
+		placeitDB adb = new placeitDB(this);
+		adb.open();
+		reminders = adb.getData();
+		adb.close();
+		if (reminders == null)
+			return;
+		for (Reminder reminder : reminders) {
+			if (reminder.getisReminded() == 1) {
+				Toast.makeText(this, reminder.getRemiderText()+" TYpe : "+reminder.getisReminded(),Toast.LENGTH_SHORT).show();
+				markers.add(googleMap.addMarker(new MarkerOptions()
+						.position(
+								new LatLng(reminder.getLatitude(), reminder
+										.getLongitude()))
+						.snippet(reminder.getCreated().toLocaleString())
+						.draggable(false)
+						.icon(BitmapDescriptorFactory
+								.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+						.title(reminder.getRemiderText())));
+			} else {
+				if (reminder.getReminderType() == reminder.WHEN_I_ARRIVE) {
+					markers.add(googleMap.addMarker(new MarkerOptions()
+							.position(
+									new LatLng(reminder.getLatitude(), reminder
+											.getLongitude()))
+							.snippet(reminder.getCreated().toLocaleString())
+							.draggable(false)
+							.icon(BitmapDescriptorFactory
+									.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))
+							.title(reminder.getRemiderText())));
+				} else if (reminder.getReminderType() == reminder.WHEN_I_LEAVE) {
+					markers.add(googleMap.addMarker(new MarkerOptions()
+							.position(
+									new LatLng(reminder.getLatitude(), reminder
+											.getLongitude()))
+							.snippet(reminder.getCreated().toLocaleString())
+							.draggable(false)
+							.icon(BitmapDescriptorFactory
+									.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+							.title(reminder.getRemiderText())));
+				}
+			}
+		}
+
+	}
+	
+
+	
+	
 	private void setUpMap() {
 		if (googleMap == null) {
 			googleMap = ((SupportMapFragment) getSupportFragmentManager()
@@ -193,6 +228,8 @@ public class GoogleMaps extends FragmentActivity implements
 						LocationManager.NETWORK_PROVIDER, MIN_TIME,
 						MIN_DISTANCE, this);
 				setGestures();
+				//new
+				setMarkersOnMap();
 			}
 		}
 	}

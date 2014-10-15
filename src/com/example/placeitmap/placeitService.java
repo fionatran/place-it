@@ -72,8 +72,7 @@ public class placeitService extends Service {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Toast.makeText(this, " Lat : " + Latitude + "Long : " + Longitude,
-				Toast.LENGTH_LONG).show();
+		 //Toast.makeText(this, " Lat : " + Latitude + " Long : " + Longitude,Toast.LENGTH_LONG).show();
 
 		if (Latitude != 0.0)
 			checkDistance();
@@ -94,11 +93,7 @@ public class placeitService extends Service {
 				ln.setLatitude(reminder.getLatitude());
 				ln.setLongitude(reminder.getLongitude());
 				dist = currtentLocation.distanceTo(ln);
-				Toast.makeText(
-						this,
-						"Dist : " + dist + " TYpe : "
-								+ reminder.getReminderType(),
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(	this,"Dist : " + dist + " TYpe : "+ reminder.getReminderType(),Toast.LENGTH_SHORT).show();
 
 				if ((reminder.getReminderType() == Reminder.WHEN_I_ARRIVE)
 						&& (dist <= reminder.getRadius())) {

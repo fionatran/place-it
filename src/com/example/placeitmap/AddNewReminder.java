@@ -1,5 +1,5 @@
 package com.example.placeitmap;
-
+/*
 import java.util.Date;
 
 import com.example.placeitmap.database.placeitDB;
@@ -133,4 +133,4 @@ public class AddNewReminder extends Activity implements OnClickListener,Location
 	
 	
 	
-}
+}*/
