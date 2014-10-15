@@ -21,6 +21,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 public class placeitService extends Service {
@@ -122,14 +123,23 @@ public class placeitService extends Service {
 		// TODO Auto-generated method stub
 		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		@SuppressWarnings({})
-		Notification notification = new Notification(R.drawable.placeit_launcher,
-				text, System.currentTimeMillis());
-		Context context = placeitService.this;
-		Intent intent2 = new Intent(context, placeitService.class);
-		PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
+		
+		Intent intent2 = new Intent(this, GoogleMaps.class);
+		intent2.setAction(Intent.ACTION_MAIN);
+	    intent2.addCategory(Intent.CATEGORY_LAUNCHER);
+		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
 				intent2, 0);
-		notification.setLatestEventInfo(this, title, detail, pendingIntent);
-		notificationManager.notify(0, notification);
+		
+		NotificationCompat.Builder mBuilder =
+			    new NotificationCompat.Builder(this)
+				.setSmallIcon(R.drawable.placeit_launcher)
+			    .setContentTitle(title)
+			    .setContentText(text);
+		mBuilder.setContentIntent(pendingIntent); 
+
+		notificationManager.notify(0, mBuilder.build());
+
+		
 		try {
 			Uri noti = RingtoneManager
 					.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
